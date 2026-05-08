@@ -23,6 +23,11 @@
     "noFallthroughCasesInSwitch": false,
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": false
+    "exactOptionalPropertyTypes": false,
+    "paths": {
+      "@config/*": ["src/config/*"],
+      "@common/*": ["src/common/*"],
+      "@http/*": ["src/http/*"]
+    }
   }
 }
