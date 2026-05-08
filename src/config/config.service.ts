@@ -21,4 +21,8 @@ export class AppConfigService {
   get openaiApiKey(): string | undefined {
     return this.nestConfig.getOrThrow<string>('OPENAI_API_KEY');
   }
+
+  get anthropicApiKey(): string | undefined {
+    return this.nestConfig.getOrThrow<string>('ANTHROPIC_API_KEY');
+  }
 }
