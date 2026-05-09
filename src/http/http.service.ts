@@ -8,16 +8,11 @@ export interface RequestOptions {
   params?: Record<string, string | number | boolean | undefined>;
 }
 
-export interface HttpResponse<T> {
-  data: T;
-  status: number;
-}
-
 @Injectable()
 export class HttpService {
   private readonly logger = new Logger(HttpService.name);
 
-  async request<T>(url: string, options: RequestOptions = {}): Promise<HttpResponse<T>> {
+  async request<T>(url: string, options: RequestOptions = {}): Promise<T> {
     const { method = 'GET', headers = {}, body, params } = options;
 
     const fullUrl = params ? this.buildUrl(url, params) : url;
@@ -44,10 +39,7 @@ export class HttpService {
     return data;
   }
 
-  async get<T>(
-    url: string,
-    options?: Omit<RequestOptions, 'method' | 'body'>,
-  ): Promise<HttpResponse<T>> {
+  async get<T>(url: string, options?: Omit<RequestOptions, 'method' | 'body'>): Promise<T> {
     const data = await this.request<T>(url, { ...options, method: 'GET' });
 
     return data;
@@ -57,7 +49,7 @@ export class HttpService {
     url: string,
     body: unknown,
     options?: Omit<RequestOptions, 'method' | 'body'>,
-  ): Promise<HttpResponse<T>> {
+  ): Promise<T> {
     const data = await this.request<T>(url, { ...options, method: 'POST', body });
 
     return data;

@@ -25,4 +25,17 @@ export class AppConfigService {
   get anthropicApiKey(): string | undefined {
     return this.nestConfig.getOrThrow<string>('ANTHROPIC_API_KEY');
   }
+
+  // Meta
+  get metaAppId(): string {
+    return this.nestConfig.getOrThrow<string>('META_APP_ID');
+  }
+
+  get metaAppSecret(): string {
+    return this.nestConfig.getOrThrow<string>('META_APP_SECRET');
+  }
+
+  get metaRedirectUri(): string {
+    return this.nestConfig.getOrThrow<string>('META_REDIRECT_URI');
+  }
 }
