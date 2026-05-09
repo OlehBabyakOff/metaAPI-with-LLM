@@ -16,4 +16,9 @@ export const configSchema = Joi.object().keys({
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
+
+  // Meta
+  META_APP_ID: Joi.string().required(),
+  META_APP_SECRET: Joi.string().required(),
+  META_REDIRECT_URI: Joi.string().uri().required(),
 });
