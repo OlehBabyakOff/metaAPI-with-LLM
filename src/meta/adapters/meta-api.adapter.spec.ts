@@ -14,7 +14,7 @@ const mockConfig = {
   metaRedirectUri: 'http://localhost:3000/auth/meta/callback',
 };
 
-const graphApiUrl = 'https://graph.facebook.com/v25.0/page-id';
+const graphApiUrl = 'https://graph.facebook.com/v25.0';
 
 describe('MetaApiAdapter', () => {
   let adapter: MetaApiAdapter;
@@ -50,22 +50,100 @@ describe('MetaApiAdapter', () => {
   });
 
   describe('getUserPages', () => {
-    it('should return pages array', async () => {
-      const mockPages = [{ id: '1', name: 'Page 1', access_token: 'token' }];
+    const mockRawPages = [
+      { id: 'page-1', name: 'Page One', access_token: 'page-token-1', category: 'Food' },
+      { id: 'page-2', name: 'Page Two', access_token: 'page-token-2' },
+    ];
 
-      mockHttp.get.mockResolvedValue({ data: mockPages });
+    const mockBatchResults = [
+      { code: 200, body: JSON.stringify({ description: 'Page one description' }) },
+      { code: 200, body: JSON.stringify({ description: 'Page two description' }) },
+    ];
 
+    beforeEach(() => {
+      mockHttp.get.mockResolvedValue({ data: mockRawPages });
+      mockHttp.post.mockResolvedValue(mockBatchResults);
+    });
+
+    it('should fetch pages from /me/accounts', async () => {
+      await adapter.getUserPages('user-token');
+
+      expect(mockHttp.get).toHaveBeenCalledWith(`${graphApiUrl}/me/accounts`, {
+        params: {
+          access_token: 'user-token',
+          fields: 'id,name,category,access_token',
+        },
+      });
+    });
+
+    it('should send batch request for descriptions', async () => {
+      await adapter.getUserPages('user-token');
+
+      expect(mockHttp.post).toHaveBeenCalledWith('https://graph.facebook.com', null, {
+        params: {
+          access_token: 'user-token',
+          batch: JSON.stringify([
+            { method: 'GET', relative_url: 'page-1?fields=description&access_token=page-token-1' },
+            { method: 'GET', relative_url: 'page-2?fields=description&access_token=page-token-2' },
+          ]),
+          include_headers: false,
+        },
+      });
+    });
+
+    it('should map raw pages to MetaPageResult with descriptions', async () => {
       const result = await adapter.getUserPages('user-token');
 
       expect(result).toEqual([
         {
-          pageId: '1',
-          name: 'Page 1',
-          accessToken: 'token',
+          pageId: 'page-1',
+          name: 'Page One',
+          category: 'Food',
+          accessToken: 'page-token-1',
+          description: 'Page one description',
+        },
+        {
+          pageId: 'page-2',
+          name: 'Page Two',
           category: 'Business',
-          description: undefined,
+          accessToken: 'page-token-2',
+          description: 'Page two description',
         },
       ]);
+    });
+
+    it('should return undefined description when batch item fails', async () => {
+      mockHttp.post.mockResolvedValue([
+        { code: 400, body: null },
+        { code: 200, body: JSON.stringify({ description: 'Page two description' }) },
+      ]);
+
+      const result = await adapter.getUserPages('user-token');
+
+      expect(result[0]?.description).toBeUndefined();
+      expect(result[1]?.description).toBe('Page two description');
+    });
+
+    it('should return undefined description when page has no description', async () => {
+      mockHttp.post.mockResolvedValue([{ code: 200, body: JSON.stringify({}) }]);
+
+      mockHttp.get.mockResolvedValue({
+        data: [mockRawPages[0]],
+      });
+
+      const result = await adapter.getUserPages('user-token');
+
+      expect(result[0]?.description).toBeUndefined();
+    });
+
+    it('should return empty array when no pages', async () => {
+      mockHttp.get.mockResolvedValue({ data: [] });
+
+      const result = await adapter.getUserPages('user-token');
+
+      expect(result).toEqual([]);
+
+      expect(mockHttp.post).not.toHaveBeenCalled();
     });
   });
 
@@ -76,7 +154,7 @@ describe('MetaApiAdapter', () => {
       await adapter.updatePageDescription('page-id', 'token', 'New description');
 
       expect(mockHttp.post).toHaveBeenCalledWith(
-        graphApiUrl,
+        `${graphApiUrl}/page-id`,
         { description: 'New description' },
         { params: { access_token: 'token' } },
       );
