@@ -28,6 +28,7 @@
       "@config/*": ["src/config/*"],
       "@common/*": ["src/common/*"],
       "@http/*": ["src/http/*"]
-    }
+    },
+    "types": ["jest", "node"]
   }
 }

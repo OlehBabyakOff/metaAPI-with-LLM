@@ -23,11 +23,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.95.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "joi": "^18.2.1",
+    "openai": "^6.37.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
@@ -72,6 +74,11 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "moduleNameMapper": {
+      "^@config/(.*)$": "<rootDir>/config/$1",
+      "^@common/(.*)$": "<rootDir>/common/$1",
+      "^@http/(.*)$": "<rootDir>/http/$1"
+    },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
