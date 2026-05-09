@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { HttpService } from '../../http/http.service';
 import { AppConfigService } from '../../config/config.service';
 
@@ -38,7 +38,6 @@ export interface MetaPageResult {
 
 @Injectable()
 export class MetaApiAdapter {
-  private readonly logger = new Logger(MetaApiAdapter.name);
   private readonly baseUrl = 'https://graph.facebook.com/v25.0';
   private readonly oauthBaseUrl = 'https://www.facebook.com/v25.0/dialog/oauth';
   private readonly tokenUrl = 'https://graph.facebook.com/v25.0/oauth/access_token';
