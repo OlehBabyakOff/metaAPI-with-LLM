@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
@@ -9,10 +9,17 @@ import { AppConfigService } from '@config/config.service';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, { logger: ['error', 'warn', 'debug', 'log'] });
 
+  const config = app.get(AppConfigService);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
   app.useGlobalFilters(new GlobalExceptionFilter());
   app.useGlobalInterceptors(new LoggingInterceptor());
-
-  const logger = new Logger('Bootstrap');
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Meta Description Manager')
@@ -26,7 +33,7 @@ async function bootstrap(): Promise<void> {
     swaggerOptions: { persistAuthorization: true },
   });
 
-  const config = app.get(AppConfigService);
+  const logger = new Logger('Bootstrap');
 
   await app.listen(config.port);
 
