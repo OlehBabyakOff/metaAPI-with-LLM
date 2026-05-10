@@ -1,10 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, Length } from 'class-validator';
 
 export class OAuthCallbackDTO {
   @ApiProperty({ description: 'Authorization code from Meta' })
+  @IsString()
+  @IsNotEmpty()
   code!: string;
 
   @ApiProperty({ description: 'State parameter for CSRF protection' })
+  @IsString()
+  @Length(32, 32)
   state!: string;
 }
 
