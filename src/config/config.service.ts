@@ -13,6 +13,11 @@ export class AppConfigService {
     return this.nestConfig.getOrThrow<number>('PORT');
   }
 
+  // Mongo
+  get mongoUri(): string {
+    return this.nestConfig.getOrThrow<string>('MONGO_URI');
+  }
+
   // LLM
   get llmProvider(): string {
     return this.nestConfig.getOrThrow<string>('LLM_PROVIDER');
