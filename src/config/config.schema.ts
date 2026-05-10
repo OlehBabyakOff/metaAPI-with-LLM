@@ -4,6 +4,9 @@ export const configSchema = Joi.object().keys({
   NODE_ENV: Joi.string().valid('development', 'production').default('development'),
   PORT: Joi.number().default(3000),
 
+  // Mongo
+  MONGO_URI: Joi.string().uri().required(),
+
   // LLM
   LLM_PROVIDER: Joi.string().valid('openai', 'claude').default('openai'),
   OPENAI_API_KEY: Joi.string().when('LLM_PROVIDER', {
