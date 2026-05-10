@@ -2,10 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
 import { AppConfigService } from '@config/config.service';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, { logger: ['error', 'warn', 'debug', 'log'] });
+
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   const logger = new Logger('Bootstrap');
 
