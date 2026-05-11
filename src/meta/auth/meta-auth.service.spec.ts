@@ -60,7 +60,7 @@ describe('MetaAuthService', () => {
       expect(mockAdapter.buildOAuthUrl).toHaveBeenCalledWith({
         clientId: 'test-app-id',
         redirectUri: 'http://localhost:3000/auth/meta/callback',
-        scopes: ['pages_show_list'],
+        scopes: ['pages_show_list', 'pages_manage_metadata'],
         state,
       });
     });
