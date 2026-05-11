@@ -409,14 +409,16 @@
           const res = await fetch(`${API}/${pageId}/generate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ customPrompt: prompt }),
+            body: JSON.stringify({ customPrompt: prompt?.trim() ? prompt : null }),
           });
 
           if (!res.ok) {
             throw new Error(await res.text());
           }
 
-          const text = await res.json();
+          const data = await res.json();
+          const text = data.description;
+
           const section = document.getElementById(`gen-section-${pageId}`);
           const genDiv = document.getElementById(`gen-${pageId}`);
 
