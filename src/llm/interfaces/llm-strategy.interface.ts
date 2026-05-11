@@ -4,6 +4,8 @@ export interface ILlmStrategy {
 }
 
 export interface GenerateDescriptionInput {
+  pageName: string;
+  category: string;
   customPrompt?: string;
 }
 

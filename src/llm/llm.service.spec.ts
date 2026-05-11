@@ -25,14 +25,23 @@ describe('LlmService', () => {
   });
 
   it('should generate description with default prompt', async () => {
-    const result = await service.generateDescription({});
+    const result = await service.generateDescription({
+      pageName: 'Business page',
+      category: 'Business',
+    });
 
     expect(result).toBe('Generated description');
+
+    expect(mockStrategy.generateDescription).toHaveBeenCalledWith(
+      expect.stringContaining('Business page'),
+    );
   });
 
   it('should use custom prompt when provided', async () => {
     const customPrompt = 'My custom prompt';
     await service.generateDescription({
+      pageName: 'Italian restaurant',
+      category: 'Food',
       customPrompt,
     });
 

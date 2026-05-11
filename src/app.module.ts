@@ -4,9 +4,10 @@ import { LlmModule } from './llm/llm.module';
 import { HttpModule } from './http/http.module';
 import { MetaModule } from './meta/meta.module';
 import { DatabaseModule } from './database/database.module';
+import { PagesModule } from './pages/pages.module';
 
 @Module({
-  imports: [AppConfigModule, LlmModule, HttpModule, MetaModule, DatabaseModule],
+  imports: [AppConfigModule, LlmModule, HttpModule, MetaModule, DatabaseModule, PagesModule],
   controllers: [],
   providers: [],
 })
