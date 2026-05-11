@@ -48,7 +48,10 @@ export class PagesService {
     return page;
   }
 
-  async generateDescription(pageId: string, dto: GenerateDescriptionDTO): Promise<string> {
+  async generateDescription(
+    pageId: string,
+    dto: GenerateDescriptionDTO,
+  ): Promise<{ description: string }> {
     const page = await this.getPageById(pageId);
 
     const generated = await this.llmService.generateDescription({
@@ -59,7 +62,7 @@ export class PagesService {
 
     await this.pagesRepository.updateGeneratedDescription(pageId, generated);
 
-    return generated;
+    return { description: generated };
   }
 
   async applyDescription(pageId: string, pageAccessToken: string): Promise<Page> {
