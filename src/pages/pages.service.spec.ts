@@ -93,7 +93,7 @@ describe('PagesService', () => {
 
       const result = await service.generateDescription('page-123', {});
 
-      expect(result).toBe('LLM generated text');
+      expect(result).toStrictEqual({ description: 'LLM generated text' });
       expect(mockRepo.updateGeneratedDescription).toHaveBeenCalledWith(
         'page-123',
         'LLM generated text',
