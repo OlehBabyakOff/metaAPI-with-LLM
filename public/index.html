@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meta Page Manager</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: sans-serif;
+        max-width: 860px;
+        margin: 40px auto;
+        padding: 0 20px;
+        background: #f9f9f7;
+        color: #1a1a18;
+      }
+      h1 {
+        font-size: 22px;
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+      .subtitle {
+        font-size: 14px;
+        color: #888780;
+        margin-bottom: 24px;
+      }
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 0.5px solid #b4b2a9;
+        background: #fff;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .btn:hover {
+        background: #f1efe8;
+      }
+      .btn:active {
+        transform: scale(0.98);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .btn-primary {
+        background: #185fa5;
+        color: #fff;
+        border-color: #185fa5;
+      }
+      .btn-primary:hover {
+        background: #0c447c;
+      }
+      .btn-primary:disabled {
+        background: #185fa5;
+      }
+      .btn-danger {
+        background: #fff;
+        color: #a32d2d;
+        border-color: #f09595;
+      }
+      .btn-danger:hover {
+        background: #fcebeb;
+      }
+      .token-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: #eaf3de;
+        color: #3b6d11;
+        font-size: 13px;
+        border: 0.5px solid #c0dd97;
+      }
+      .page-card {
+        background: #fff;
+        border: 0.5px solid #d3d1c7;
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 12px;
+      }
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+      }
+      .page-name {
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0 0 2px;
+      }
+      .page-category {
+        font-size: 12px;
+        color: #888780;
+      }
+      .field-label {
+        font-size: 12px;
+        color: #888780;
+        margin-bottom: 4px;
+      }
+      .page-description {
+        font-size: 13px;
+        color: #5f5e5a;
+        margin-bottom: 14px;
+        padding: 10px 12px;
+        background: #f1efe8;
+        border-radius: 8px;
+        min-height: 36px;
+        line-height: 1.5;
+      }
+      .page-description.generated {
+        background: #e6f1fb;
+        color: #0c447c;
+      }
+      textarea {
+        width: 100%;
+        height: 72px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 0.5px solid #d3d1c7;
+        font-size: 13px;
+        font-family: sans-serif;
+        resize: vertical;
+        background: #fff;
+      }
+      textarea:focus {
+        outline: none;
+        border-color: #85b7eb;
+        box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.15);
+      }
+      input[type='text'] {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 0.5px solid #d3d1c7;
+        font-size: 13px;
+        background: #fff;
+        width: 100%;
+      }
+      input[type='text']:focus {
+        outline: none;
+        border-color: #85b7eb;
+        box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.15);
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .status {
+        font-size: 12px;
+        margin-top: 8px;
+      }
+      .status.ok {
+        color: #3b6d11;
+      }
+      .status.err {
+        color: #a32d2d;
+      }
+      .empty {
+        text-align: center;
+        padding: 48px 0;
+        color: #888780;
+        font-size: 15px;
+      }
+      .spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid #d3d1c7;
+        border-top-color: #185fa5;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        vertical-align: middle;
+      }
+      .spinner-white {
+        border-color: rgba(255, 255, 255, 0.4);
+        border-top-color: #fff;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Meta Page Description Manager</h1>
+    <p class="subtitle">Generate and apply AI descriptions to your Facebook pages.</p>
+
+    <div class="toolbar" id="toolbar">
+      <button class="btn btn-primary" onclick="loginWithMeta()" id="loginBtn">
+        Connect with Meta
+      </button>
+      <span id="tokenStatus"></span>
+    </div>
+
+    <div id="syncBar" style="display: none; margin-bottom: 20px">
+      <button class="btn" onclick="syncPages()" id="syncBtn">
+        <span id="syncSpinner" style="display: none" class="spinner"></span>
+        <span id="syncLabel">⟳ Sync pages from Meta</span>
+      </button>
+    </div>
+
+    <div id="pages"></div>
+
+    <script>
+      const API = '/api/pages';
+      let accessToken = null;
+
+      function init() {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('access_token');
+
+        if (token) {
+          accessToken = token;
+
+          window.history.replaceState({}, '', '/');
+        }
+
+        updateAuthUI();
+
+        if (accessToken) {
+          loadPages();
+        }
+      }
+
+      function updateAuthUI() {
+        const tokenStatus = document.getElementById('tokenStatus');
+        const syncBar = document.getElementById('syncBar');
+        const loginBtn = document.getElementById('loginBtn');
+
+        if (accessToken) {
+          loginBtn.style.display = 'none';
+          tokenStatus.innerHTML = `
+          <span class="token-badge">&#10003; Connected to Meta</span>
+          <button class="btn btn-danger" onclick="logout()" style="margin-left:8px;">Disconnect</button>
+        `;
+          syncBar.style.display = 'block';
+        } else {
+          loginBtn.style.display = 'inline-flex';
+          tokenStatus.innerHTML = '';
+          syncBar.style.display = 'none';
+          document.getElementById('pages').innerHTML =
+            '<div class="empty">Connect your Meta account to manage your pages.</div>';
+        }
+      }
+
+      async function loginWithMeta() {
+        const btn = document.getElementById('loginBtn');
+
+        btn.innerHTML = '<span class="spinner"></span> Redirecting&hellip;';
+        btn.disabled = true;
+
+        try {
+          const res = await fetch('/auth/meta/init');
+
+          const data = await res.json();
+
+          window.location.href = data.url;
+        } catch (e) {
+          btn.innerHTML = 'Connect with Meta';
+          btn.disabled = false;
+
+          document.getElementById('pages').innerHTML =
+            '<div class="empty" style="color:#a32d2d;">Failed to start OAuth flow. Server is down!</div>';
+        }
+      }
+
+      function logout() {
+        accessToken = null;
+
+        document.getElementById('pages').innerHTML = '';
+
+        updateAuthUI();
+      }
+
+      async function syncPages() {
+        if (!accessToken) {
+          return;
+        }
+
+        const btn = document.getElementById('syncBtn');
+        const spinner = document.getElementById('syncSpinner');
+        const label = document.getElementById('syncLabel');
+
+        btn.disabled = true;
+        spinner.style.display = 'inline-block';
+        label.textContent = ' Syncing…';
+
+        try {
+          const res = await fetch(`${API}/sync?accessToken=${encodeURIComponent(accessToken)}`, {
+            method: 'POST',
+          });
+
+          if (!res.ok) {
+            throw new Error();
+          }
+
+          await loadPages();
+        } catch (e) {
+          document.getElementById('pages').innerHTML =
+            '<div class="empty" style="color:#a32d2d;">Sync failed. Check your access token.</div>';
+        } finally {
+          btn.disabled = false;
+          spinner.style.display = 'none';
+          label.textContent = '⟳ Sync pages from Meta';
+        }
+      }
+
+      async function loadPages() {
+        const container = document.getElementById('pages');
+
+        container.innerHTML =
+          '<div class="empty"><span class="spinner"></span> Loading pages&hellip;</div>';
+
+        try {
+          const res = await fetch(API);
+
+          if (!res.ok) {
+            throw new Error();
+          }
+
+          const pages = await res.json();
+
+          renderPages(pages);
+        } catch (e) {
+          container.innerHTML = '<div class="empty">Could not load pages.</div>';
+        }
+      }
+
+      function renderPages(pages) {
+        const container = document.getElementById('pages');
+
+        if (!pages.length) {
+          container.innerHTML =
+            '<div class="empty">No pages found. Click "Sync pages from Meta" to fetch them.</div>';
+
+          return;
+        }
+
+        container.innerHTML = pages
+          .map(
+            (p) => `
+        <div class="page-card" id="card-${p.pageId}">
+          <div class="page-header">
+            <div>
+              <p class="page-name">${escHtml(p.name)}</p>
+              <span class="page-category">${escHtml(p.category || 'Page')}</span>
+            </div>
+          </div>
+
+          <div class="field-label">Current description</div>
+          <div class="page-description">${escHtml(p.description || '—')}</div>
+
+          <div id="gen-section-${p.pageId}" style="${p.generatedDescription ? '' : 'display:none;'}">
+            <div class="field-label">Generated description</div>
+            <div class="page-description generated" id="gen-${p.pageId}">${escHtml(p.generatedDescription || '')}</div>
+          </div>
+
+          <div class="field-label" style="margin-top:12px;">Custom prompt (optional)</div>
+          <textarea id="prompt-${p.pageId}" placeholder="E.g. Write a friendly, professional description for a coffee shop…"></textarea>
+
+          <div class="field-label" style="margin-top:10px;">Page access token (if different from synced token)</div>
+          <input type="text" id="token-${p.pageId}" placeholder="Leave blank to use synced token" />
+
+          <div class="actions">
+            <button class="btn" onclick="generate('${p.pageId}')" id="gen-btn-${p.pageId}">
+              &#10024; Generate description
+            </button>
+            <button class="btn btn-primary" onclick="apply('${p.pageId}')"
+              id="apply-btn-${p.pageId}" ${p.generatedDescription ? '' : 'disabled'}>
+              &#8594; Apply to Meta
+            </button>
+          </div>
+          <div class="status" id="status-${p.pageId}"></div>
+        </div>
+      `,
+          )
+          .join('');
+      }
+
+      async function generate(pageId) {
+        const prompt = document.getElementById(`prompt-${pageId}`).value;
+        const btn = document.getElementById(`gen-btn-${pageId}`);
+        const status = document.getElementById(`status-${pageId}`);
+
+        btn.innerHTML = '<span class="spinner"></span> Generating…';
+        btn.disabled = true;
+        status.textContent = '';
+
+        try {
+          const res = await fetch(`${API}/${pageId}/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ customPrompt: prompt }),
+          });
+
+          if (!res.ok) {
+            throw new Error(await res.text());
+          }
+
+          const text = await res.json();
+          const section = document.getElementById(`gen-section-${pageId}`);
+          const genDiv = document.getElementById(`gen-${pageId}`);
+
+          genDiv.textContent = text;
+          section.style.display = '';
+          document.getElementById(`apply-btn-${pageId}`).disabled = false;
+          status.className = 'status ok';
+          status.textContent = 'Description generated successfully.';
+        } catch (e) {
+          status.className = 'status err';
+          status.textContent = 'Generation failed. Please try again.';
+        } finally {
+          btn.innerHTML = '&#10024; Generate description';
+          btn.disabled = false;
+        }
+      }
+
+      async function apply(pageId) {
+        const pageAccessToken = document.getElementById(`token-${pageId}`).value;
+        const btn = document.getElementById(`apply-btn-${pageId}`);
+        const status = document.getElementById(`status-${pageId}`);
+
+        btn.innerHTML = '<span class="spinner spinner-white"></span> Applying…';
+        btn.disabled = true;
+        status.textContent = '';
+
+        try {
+          const res = await fetch(`${API}/${pageId}/apply`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pageAccessToken }),
+          });
+
+          if (!res.ok) {
+            throw new Error(await res.text());
+          }
+
+          status.className = 'status ok';
+          status.textContent = 'Applied successfully to Meta.';
+
+          await loadPages();
+        } catch (e) {
+          status.className = 'status err';
+          status.textContent = 'Failed to apply. Check the page access token.';
+          btn.innerHTML = '&#8594; Apply to Meta';
+          btn.disabled = false;
+        }
+      }
+
+      function escHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      init();
+    </script>
+  </body>
+</html>

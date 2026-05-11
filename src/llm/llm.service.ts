@@ -10,7 +10,9 @@ export class LlmService {
   async generateDescription(input: GenerateDescriptionInput): Promise<string> {
     const { pageName, category, customPrompt } = input;
 
-    const prompt = customPrompt ?? this.buildDefaultPrompt(pageName, category);
+    const prompt = customPrompt?.length
+      ? customPrompt
+      : this.buildDefaultPrompt(pageName, category);
 
     const strategy = this.strategyFactory.getStrategy();
 
