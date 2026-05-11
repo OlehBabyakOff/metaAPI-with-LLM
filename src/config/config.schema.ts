@@ -8,7 +8,7 @@ export const configSchema = Joi.object().keys({
   MONGO_URI: Joi.string().uri().required(),
 
   // LLM
-  LLM_PROVIDER: Joi.string().valid('openai', 'claude').default('openai'),
+  LLM_PROVIDER: Joi.string().valid('openai', 'claude', 'gemini').default('gemini'),
   OPENAI_API_KEY: Joi.string().when('LLM_PROVIDER', {
     is: 'openai',
     then: Joi.required(),
@@ -16,6 +16,11 @@ export const configSchema = Joi.object().keys({
   }),
   ANTHROPIC_API_KEY: Joi.string().when('LLM_PROVIDER', {
     is: 'claude',
+    then: Joi.required(),
+    otherwise: Joi.optional(),
+  }),
+  GEMINI_API_KEY: Joi.string().when('LLM_PROVIDER', {
+    is: 'gemini',
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),

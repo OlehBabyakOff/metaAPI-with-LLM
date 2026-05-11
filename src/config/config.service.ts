@@ -31,6 +31,10 @@ export class AppConfigService {
     return this.nestConfig.getOrThrow<string>('ANTHROPIC_API_KEY');
   }
 
+  get geminiApiKey(): string | undefined {
+    return this.nestConfig.getOrThrow<string>('GEMINI_API_KEY');
+  }
+
   // Meta
   get metaAppId(): string {
     return this.nestConfig.getOrThrow<string>('META_APP_ID');
