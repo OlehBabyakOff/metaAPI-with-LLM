@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, MinLength } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class GenerateDescriptionDTO {
   @ApiPropertyOptional({
@@ -8,6 +8,5 @@ export class GenerateDescriptionDTO {
   })
   @IsOptional()
   @IsString()
-  @MinLength(10)
   customPrompt?: string;
 }
