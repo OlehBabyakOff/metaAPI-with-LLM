@@ -9,12 +9,15 @@ const mockHttp = {
 };
 
 const mockConfig = {
+  metaBaseUrl: 'https://graph.facebook.com',
+  metaApiVersion: 'v25.0',
   metaAppId: 'app-id',
   metaAppSecret: 'app-secret',
   metaRedirectUri: 'http://localhost:3000/auth/meta/callback',
 };
 
-const graphApiUrl = 'https://graph.facebook.com/v25.0';
+const graphRootUrl = 'https://graph.facebook.com';
+const graphApiUrl = `${graphRootUrl}/v25.0`;
 
 describe('MetaApiAdapter', () => {
   let adapter: MetaApiAdapter;
@@ -79,7 +82,7 @@ describe('MetaApiAdapter', () => {
     it('should send batch request for descriptions', async () => {
       await adapter.getUserPages('user-token');
 
-      expect(mockHttp.post).toHaveBeenCalledWith('https://graph.facebook.com', null, {
+      expect(mockHttp.post).toHaveBeenCalledWith(graphRootUrl, null, {
         params: {
           access_token: 'user-token',
           batch: JSON.stringify([
