@@ -23,7 +23,7 @@ export class MetaAuthService {
     const url = this.metaAdapter.buildOAuthUrl({
       clientId: this.config.metaAppId,
       redirectUri: this.config.metaRedirectUri,
-      scopes: ['pages_show_list', 'pages_manage_metadata', 'pages_read_engagement'],
+      scopes: this.config.metaScopes,
       state,
     });
 

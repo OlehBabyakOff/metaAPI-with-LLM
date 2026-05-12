@@ -13,6 +13,7 @@ const mockAdapter = {
 const mockConfig = {
   metaAppId: 'test-app-id',
   metaRedirectUri: 'http://localhost:3000/auth/meta/callback',
+  metaScopes: ['pages_show_list', 'pages_manage_metadata', 'pages_read_engagement'],
 };
 
 describe('MetaAuthService', () => {
@@ -60,7 +61,7 @@ describe('MetaAuthService', () => {
       expect(mockAdapter.buildOAuthUrl).toHaveBeenCalledWith({
         clientId: 'test-app-id',
         redirectUri: 'http://localhost:3000/auth/meta/callback',
-        scopes: ['pages_show_list', 'pages_manage_metadata', 'pages_read_engagement'],
+        scopes: mockConfig.metaScopes,
         state,
       });
     });
