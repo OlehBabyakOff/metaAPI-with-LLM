@@ -41,4 +41,8 @@ async function bootstrap(): Promise<void> {
   logger.log(`Swagger docs: http://localhost:${config.port}/api/docs`);
 }
 
-bootstrap();
+bootstrap().catch((err) => {
+  console.error(err);
+
+  process.exit(1);
+});
