@@ -43,15 +43,20 @@ export interface MetaPageResult {
 
 @Injectable()
 export class MetaApiAdapter {
-  private readonly batchUrl = 'https://graph.facebook.com';
-  private readonly baseUrl = 'https://graph.facebook.com/v25.0';
-  private readonly oauthBaseUrl = 'https://www.facebook.com/v25.0/dialog/oauth';
-  private readonly tokenUrl = 'https://graph.facebook.com/v25.0/oauth/access_token';
+  private readonly graphRootUrl: string;
+  private readonly graphBaseUrl: string;
+  private readonly oauthBaseUrl: string;
+  private readonly tokenUrl: string;
 
   constructor(
     private readonly http: HttpService,
     private readonly config: AppConfigService,
-  ) {}
+  ) {
+    this.graphRootUrl = this.config.metaBaseUrl;
+    this.graphBaseUrl = `${this.config.metaBaseUrl}/${this.config.metaApiVersion}`;
+    this.oauthBaseUrl = `https://www.facebook.com/${this.config.metaApiVersion}/dialog/oauth`;
+    this.tokenUrl = `${this.graphBaseUrl}/oauth/access_token`;
+  }
 
   // OAuth methods
   buildOAuthUrl(params: MetaOAuthUrlParams): string {
@@ -108,19 +113,22 @@ export class MetaApiAdapter {
     description: string,
   ): Promise<void> {
     await this.http.post<{ success: boolean }>(
-      `${this.baseUrl}/${pageId}`,
+      `${this.graphBaseUrl}/${pageId}`,
       { description },
       { params: { access_token: pageAccessToken } },
     );
   }
 
   private async getPages(accessToken: string): Promise<RawMetaPage[]> {
-    const response = await this.http.get<RawMetaPageListResponse>(`${this.baseUrl}/me/accounts`, {
-      params: {
-        access_token: accessToken,
-        fields: 'id,name,category,access_token',
+    const response = await this.http.get<RawMetaPageListResponse>(
+      `${this.graphBaseUrl}/me/accounts`,
+      {
+        params: {
+          access_token: accessToken,
+          fields: 'id,name,category,access_token',
+        },
       },
-    });
+    );
 
     return response.data;
   }
@@ -138,7 +146,7 @@ export class MetaApiAdapter {
       relative_url: `${page.id}?fields=description&access_token=${page.access_token}`,
     }));
 
-    const results = await this.http.post<BatchResponse[]>(this.batchUrl, null, {
+    const results = await this.http.post<BatchResponse[]>(this.graphRootUrl, null, {
       params: {
         access_token: accessToken,
         batch: JSON.stringify(batch),

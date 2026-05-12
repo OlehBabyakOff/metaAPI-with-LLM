@@ -36,6 +36,14 @@ export class AppConfigService {
   }
 
   // Meta
+  get metaBaseUrl(): string {
+    return this.nestConfig.getOrThrow<string>('META_BASE_URL');
+  }
+
+  get metaApiVersion(): string {
+    return this.nestConfig.getOrThrow<string>('META_API_VERSION');
+  }
+
   get metaAppId(): string {
     return this.nestConfig.getOrThrow<string>('META_APP_ID');
   }
@@ -46,5 +54,12 @@ export class AppConfigService {
 
   get metaRedirectUri(): string {
     return this.nestConfig.getOrThrow<string>('META_REDIRECT_URI');
+  }
+
+  get metaScopes(): string[] {
+    return this.nestConfig
+      .getOrThrow<string>('META_SCOPES')
+      .split(',')
+      .map((scope) => scope.trim());
   }
 }

@@ -377,8 +377,7 @@
           <div class="field-label" style="margin-top:12px;">Custom prompt (optional)</div>
           <textarea id="prompt-${p.pageId}" placeholder="E.g. Write a friendly, professional description for a coffee shop…"></textarea>
 
-          <div class="field-label" style="margin-top:10px;">Page access token (if different from synced token)</div>
-          <input type="text" id="token-${p.pageId}" placeholder="Leave blank to use synced token" />
+          <input type="hidden" id="token-${p.pageId}" placeholder="Leave blank to use synced token" />
 
           <div class="actions">
             <button class="btn" onclick="generate('${p.pageId}')" id="gen-btn-${p.pageId}">
